@@ -1,16 +1,30 @@
-# Dependencies & Build artifacts
-node_modules/
-target/
-dist/
-build/
+# ---------- Backend (Maven / Java) ----------
+backend/target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
 
-# Environment variables & local configs
+# ---------- Frontend (Node / Vite) ----------
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ---------- Environment / secrets ----------
 .env
 .env.local
-*.log
+backend/src/main/resources/application-local.properties
 
-# IDE / Editor folders
+# ---------- IDE ----------
 .idea/
-.vscode/
 *.iml
-*.DS_Store
+.vscode/
+.settings/
+.classpath
+.project
+
+# ---------- OS ----------
+.DS_Store
+Thumbs.db
+
+# ---------- Generated resume/upload storage (local dev only) ----------
+backend/storage/
