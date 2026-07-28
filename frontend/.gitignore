@@ -1,0 +1,16 @@
+# Dependencies & Build artifacts
+node_modules/
+target/
+dist/
+build/
+
+# Environment variables & local configs
+.env
+.env.local
+*.log
+
+# IDE / Editor folders
+.idea/
+.vscode/
+*.iml
+*.DS_Store
