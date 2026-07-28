@@ -1,0 +1,12 @@
+package com.vimalkumar.careerportal.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class AuthResponse {
+    private String token;
+    private String fullName;
+    private String email;
+}
