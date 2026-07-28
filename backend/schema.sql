@@ -48,6 +48,7 @@ CREATE TABLE jobs (
     INDEX idx_jobs_location (location),
     INDEX idx_jobs_work_mode (work_mode),
     INDEX idx_jobs_experience (min_experience, max_experience),
+    INDEX idx_jobs_source_url (source_url),
     FULLTEXT INDEX ft_jobs_title_desc (title, description)
 ) ENGINE=InnoDB;
 
