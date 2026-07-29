@@ -53,6 +53,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/api/jobs/**").permitAll() // job browsing is public
+                .requestMatchers("/api/admin/**").permitAll() // TODO: restrict to ADMIN role before production
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

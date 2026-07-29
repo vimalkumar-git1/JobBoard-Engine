@@ -6,10 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class JobSearchRequest {
-    private String keyword;       // matched against title/description
-    private String techStack;     // e.g. "Java,Spring Boot"
-    private String location;
-    private String workMode;      // REMOTE / HYBRID / ONSITE
-    private Double minExperience;
-    private Double maxExperience;
+    private String jobRole;       // Job title/role to search for
+    private String location;      // Location filter
+    private String workMode;      // Work mode filter (REMOTE, HYBRID, ONSITE)
 }

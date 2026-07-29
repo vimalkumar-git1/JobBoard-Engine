@@ -19,10 +19,24 @@ public class JobController {
         this.jobService = jobService;
     }
 
-    /** Multi-criteria search: GET /api/jobs/search?keyword=java&location=chennai&workMode=REMOTE */
+    /** Simplified search: GET /api/jobs/search?jobRole=java&location=chennai&workMode=REMOTE */
     @GetMapping("/search")
     public ResponseEntity<Page<JobDto>> search(JobSearchRequest request, Pageable pageable) {
         return ResponseEntity.ok(jobService.search(request, pageable));
+    }
+
+    /** Get job role suggestions for autocomplete. */
+    @GetMapping("/suggestions/titles")
+    public ResponseEntity<List<String>> getJobRoleSuggestions(
+            @RequestParam(required = false, defaultValue = "") String q) {
+        return ResponseEntity.ok(jobService.getJobRoleSuggestions(q));
+    }
+
+    /** Get location suggestions for autocomplete. */
+    @GetMapping("/suggestions/locations")
+    public ResponseEntity<List<String>> getLocationSuggestions(
+            @RequestParam(required = false, defaultValue = "") String q) {
+        return ResponseEntity.ok(jobService.getLocationSuggestions(q));
     }
 
     @GetMapping("/{id}")

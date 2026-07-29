@@ -83,7 +83,8 @@ public class CompanyAtsAggregatorService {
         Job job = new Job();
         job.setTitle(nj.title());
         job.setCompanyName(nj.company());
-        job.setDescription(nj.description() == null || nj.description().isBlank() ? "" : nj.description());
+        String description = nj.description() == null || nj.description().isBlank() ? "" : nj.description();
+        job.setDescription(truncateToSafeLength(description, 20000));
         job.setLocation(nj.location());
         job.setSourcePortal(nj.company().toUpperCase() + "_ATS");
         job.setSourceUrl(nj.sourceUrl());
@@ -96,5 +97,12 @@ public class CompanyAtsAggregatorService {
 
     public List<CompanyAtsSource> getConfiguredSources() {
         return companySources;
+    }
+
+    private String truncateToSafeLength(String value, int maxLength) {
+        if (value == null) {
+            return "";
+        }
+        return value.length() <= maxLength ? value : value.substring(0, maxLength);
     }
 }

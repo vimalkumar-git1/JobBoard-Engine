@@ -1,11 +1,18 @@
 package com.vimalkumar.careerportal.entity;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "jobs")
@@ -23,8 +30,7 @@ public class Job {
     @Column(name = "company_name", nullable = false, length = 200)
     private String companyName;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String description;
 
     @Column(name = "tech_stack", length = 500)
