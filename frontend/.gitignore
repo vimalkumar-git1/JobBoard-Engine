@@ -1,3 +1,37 @@
+# # ---------- Backend (Maven / Java) ----------
+# backend/target/
+# *.class
+# *.jar
+# !.mvn/wrapper/maven-wrapper.jar
+
+# # ---------- Frontend (Node / Vite) ----------
+# frontend/node_modules/
+# frontend/dist/
+# frontend/.vite/
+
+# # ---------- Environment / secrets ----------
+# .env
+# .env.local
+# backend/src/main/resources/application-local.properties
+
+# # ---------- IDE ----------
+# .idea/
+# *.iml
+# .vscode/
+# .settings/
+# .classpath
+# .project
+
+# # ---------- OS ----------
+# .DS_Store
+# Thumbs.db
+
+# # ---------- Generated resume/upload storage (local dev only) ----------
+# backend/storage/
+
+
+
+
 # ---------- Backend (Maven / Java) ----------
 backend/target/
 *.class
@@ -12,6 +46,7 @@ frontend/.vite/
 # ---------- Environment / secrets ----------
 .env
 .env.local
+backend/src/main/resources/application.properties
 backend/src/main/resources/application-local.properties
 
 # ---------- IDE ----------
