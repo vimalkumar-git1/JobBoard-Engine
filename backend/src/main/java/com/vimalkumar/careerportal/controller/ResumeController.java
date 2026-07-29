@@ -1,6 +1,7 @@
 package com.vimalkumar.careerportal.controller;
 
 import com.vimalkumar.careerportal.dto.AtsMatchResponse;
+import com.vimalkumar.careerportal.dto.JobDescriptionMatchRequest;
 import com.vimalkumar.careerportal.dto.ResumeUploadResponse;
 import com.vimalkumar.careerportal.dto.ResumeVersionResponse;
 import com.vimalkumar.careerportal.entity.Job;
@@ -150,4 +151,23 @@ public class ResumeController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }
+
+    /** Match resume against raw job description (no Job ID needed) */
+    @PostMapping("/{resumeId}/match-description")
+    public ResponseEntity<AtsMatchResponse> matchDescription(@PathVariable Long resumeId,
+                                                              @RequestBody JobDescriptionMatchRequest request) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resume not found: " + resumeId));
+
+        // Extract skills from the pasted job description
+        List<String> jobSkills = resumeParserService.extractSkills(request.getJobDescription());
+        String jobTechStack = String.join(",", jobSkills);
+
+        List<String> resumeSkills = resume.getParsedSkills() == null
+                ? List.of()
+                : List.of(resume.getParsedSkills().split(","));
+
+        return ResponseEntity.ok(atsMatchService.computeMatch(resumeSkills, jobTechStack));
+    }
 }
+

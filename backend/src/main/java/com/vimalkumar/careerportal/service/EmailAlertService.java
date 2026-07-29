@@ -51,10 +51,8 @@ public class EmailAlertService {
 
     private void sendDigestForSearch(SavedSearch search) {
         JobSearchRequest req = new JobSearchRequest();
-        req.setKeyword(search.getKeywords());
+        req.setJobRole(search.getKeywords());
         req.setLocation(search.getLocation());
-        req.setMinExperience(search.getMinExperience());
-        req.setMaxExperience(search.getMaxExperience());
         if (search.getWorkMode() != null && search.getWorkMode() != SavedSearch.WorkMode.ANY) {
             req.setWorkMode(search.getWorkMode().name());
         }

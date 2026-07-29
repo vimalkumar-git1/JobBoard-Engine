@@ -20,6 +20,7 @@ D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\ApplicationStatusUpdateRequest.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\AtsMatchResponse.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\AuthResponse.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\JobDescriptionMatchRequest.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\JobDto.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\JobSearchRequest.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\LoginRequest.java

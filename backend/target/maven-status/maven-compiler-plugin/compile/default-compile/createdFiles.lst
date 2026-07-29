@@ -16,6 +16,7 @@ com\vimalkumar\careerportal\aggregator\AtsBoardClient$NormalizedJob.class
 com\vimalkumar\careerportal\dto\ApplicationCreateRequest.class
 com\vimalkumar\careerportal\aggregator\JobAggregatorScheduler.class
 com\vimalkumar\careerportal\service\SkillDictionary.class
+com\vimalkumar\careerportal\dto\JobDescriptionMatchRequest.class
 com\vimalkumar\careerportal\service\FileStorageService.class
 com\vimalkumar\careerportal\entity\Application$Status.class
 com\vimalkumar\careerportal\entity\Application.class

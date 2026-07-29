@@ -8,11 +8,14 @@ export default function ResumePage() {
   const [skills, setSkills] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [jobId, setJobId] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
   const [matchResult, setMatchResult] = useState(null);
   const [matching, setMatching] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [versions, setVersions] = useState([]);
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("jobId"); // "jobId" or "description"
 
   const loadVersions = async () => {
     try {

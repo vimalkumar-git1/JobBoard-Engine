@@ -3,13 +3,17 @@ import client from "../api/client";
 import Layout from "../components/Layout";
 
 export default function JobsPage() {
-  const [filters, setFilters] = useState({ keyword: "", location: "", workMode: "", techStack: "" });
+  const [filters, setFilters] = useState({ jobRole: "", location: "", workMode: "" });
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [savingJobId, setSavingJobId] = useState(null);
   const [selectedJob, setSelectedJob] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [jobRoleSuggestions, setJobRoleSuggestions] = useState([]);
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [showJobRoleSuggestions, setShowJobRoleSuggestions] = useState(false);
+  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
 
   const search = async (e) => {
     if (e) e.preventDefault();
@@ -26,6 +30,58 @@ export default function JobsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Fetch job role suggestions
+  const fetchJobRoleSuggestions = async (term) => {
+    if (term.length < 1) {
+      setJobRoleSuggestions([]);
+      return;
+    }
+    try {
+      const res = await client.get("/jobs/suggestions/titles", { params: { q: term } });
+      setJobRoleSuggestions(res.data || []);
+    } catch (err) {
+      setJobRoleSuggestions([]);
+    }
+  };
+
+  // Fetch location suggestions
+  const fetchLocationSuggestions = async (term) => {
+    if (term.length < 1) {
+      setLocationSuggestions([]);
+      return;
+    }
+    try {
+      const res = await client.get("/jobs/suggestions/locations", { params: { q: term } });
+      setLocationSuggestions(res.data || []);
+    } catch (err) {
+      setLocationSuggestions([]);
+    }
+  };
+
+  const handleJobRoleChange = (value) => {
+    setFilters({ ...filters, jobRole: value });
+    fetchJobRoleSuggestions(value);
+    setShowJobRoleSuggestions(true);
+  };
+
+  const handleLocationChange = (value) => {
+    setFilters({ ...filters, location: value });
+    fetchLocationSuggestions(value);
+    setShowLocationSuggestions(true);
+  };
+
+  const selectJobRoleSuggestion = (role) => {
+    setFilters({ ...filters, jobRole: role });
+    setShowJobRoleSuggestions(false);
+    setJobRoleSuggestions([]);
+  };
+
+  const selectLocationSuggestion = (loc) => {
+    setFilters({ ...filters, location: loc });
+    setShowLocationSuggestions(false);
+    setLocationSuggestions([]);
   };
 
   useEffect(() => {
@@ -82,25 +138,58 @@ export default function JobsPage() {
       )}
 
       <form onSubmit={search} className="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-          <input
-            placeholder="Keyword (e.g. Java, React)"
-            value={filters.keyword}
-            onChange={(e) => setFilters({ ...filters, keyword: e.target.value })}
-            className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent"
-          />
-          <input
-            placeholder="Tech stack (Java,Spring Boot)"
-            value={filters.techStack}
-            onChange={(e) => setFilters({ ...filters, techStack: e.target.value })}
-            className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent"
-          />
-          <input
-            placeholder="Location (City/Remote)"
-            value={filters.location}
-            onChange={(e) => setFilters({ ...filters, location: e.target.value })}
-            className="border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          {/* Job Role Input with Autocomplete */}
+          <div className="relative">
+            <input
+              placeholder="Job Role (e.g. Developer)"
+              value={filters.jobRole}
+              onChange={(e) => handleJobRoleChange(e.target.value)}
+              onFocus={() => setShowJobRoleSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowJobRoleSuggestions(false), 200)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent"
+            />
+            {showJobRoleSuggestions && jobRoleSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg mt-1 shadow-lg z-50 max-h-40 overflow-y-auto">
+                {jobRoleSuggestions.map((role, idx) => (
+                  <div
+                    key={idx}
+                    onMouseDown={() => selectJobRoleSuggestion(role)}
+                    className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm text-gray-700"
+                  >
+                    {role}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Location Input with Autocomplete */}
+          <div className="relative">
+            <input
+              placeholder="Location (e.g. Bangalore)"
+              value={filters.location}
+              onChange={(e) => handleLocationChange(e.target.value)}
+              onFocus={() => setShowLocationSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent"
+            />
+            {showLocationSuggestions && locationSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg mt-1 shadow-lg z-50 max-h-40 overflow-y-auto">
+                {locationSuggestions.map((loc, idx) => (
+                  <div
+                    key={idx}
+                    onMouseDown={() => selectLocationSuggestion(loc)}
+                    className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm text-gray-700"
+                  >
+                    {loc}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Work Mode Selector */}
           <select
             value={filters.workMode}
             onChange={(e) => setFilters({ ...filters, workMode: e.target.value })}
@@ -111,11 +200,13 @@ export default function JobsPage() {
             <option value="HYBRID">🏢 Hybrid</option>
             <option value="ONSITE">📍 Onsite</option>
           </select>
+
+          {/* Search Button */}
           <button className="bg-gradient-to-r from-navy to-primary text-white rounded-lg px-6 py-2.5 text-sm font-semibold hover:shadow-lg transition-all duration-200">
             🔍 Search
           </button>
         </div>
-        <p className="text-xs text-gray-500">💡 Tip: Leave filters empty to see all jobs</p>
+        <p className="text-xs text-gray-500">💡 Tip: Start typing to see suggestions for job roles and locations</p>
       </form>
 
       {error && (
@@ -157,25 +248,12 @@ export default function JobsPage() {
 
             <div className="flex gap-3 text-xs text-gray-600 mb-3 pb-3 border-b border-gray-100">
               <span>📍 {job.location}</span>
-              {job.techStack && <span>🛠️ {job.techStack.split(",")[0]}</span>}
+              <span>💼 {job.workMode}</span>
             </div>
 
             <p className="text-sm text-gray-700 mb-4 line-clamp-2">
               {job.description}
             </p>
-
-            {job.techStack && (
-              <div className="flex flex-wrap gap-1.5 mb-4">
-                {job.techStack.split(",").slice(0, 3).map((skill, i) => (
-                  <span key={i} className="bg-accent/10 text-accent text-xs px-2.5 py-1 rounded-full font-medium">
-                    {skill.trim()}
-                  </span>
-                ))}
-                {job.techStack.split(",").length > 3 && (
-                  <span className="text-xs text-gray-500 px-2.5 py-1">+{job.techStack.split(",").length - 3}</span>
-                )}
-              </div>
-            )}
 
             <div className="flex gap-2">
               <button
