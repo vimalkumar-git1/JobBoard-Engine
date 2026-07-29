@@ -1,3 +1,10 @@
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\aggregator\AdzunaClient.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\aggregator\AtsBoardClient.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\aggregator\CompanyAtsAggregatorService.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\aggregator\CompanyAtsSource.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\aggregator\JobAggregatorController.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\aggregator\JobAggregatorScheduler.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\aggregator\JobAggregatorService.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\CareerPortalApplication.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\config\OpenApiConfig.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\config\SecurityConfig.java
@@ -6,6 +13,8 @@ D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\controller\CoverLetterController.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\controller\JobController.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\controller\ResumeController.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\adzuna\AdzunaJobResult.java
+D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\adzuna\AdzunaSearchResponse.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\ApplicationCreateRequest.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\ApplicationDto.java
 D:\career-portal-fullstack_new\career-portal-fullstack\backend\src\main\java\com\vimalkumar\careerportal\dto\ApplicationStatusUpdateRequest.java

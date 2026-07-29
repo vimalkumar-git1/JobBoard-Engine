@@ -12,7 +12,9 @@ com\vimalkumar\careerportal\dto\RegisterRequest.class
 com\vimalkumar\careerportal\service\ApplicationService.class
 com\vimalkumar\careerportal\entity\ResumeVersion.class
 com\vimalkumar\careerportal\security\JwtUtil.class
+com\vimalkumar\careerportal\aggregator\AtsBoardClient$NormalizedJob.class
 com\vimalkumar\careerportal\dto\ApplicationCreateRequest.class
+com\vimalkumar\careerportal\aggregator\JobAggregatorScheduler.class
 com\vimalkumar\careerportal\service\SkillDictionary.class
 com\vimalkumar\careerportal\service\FileStorageService.class
 com\vimalkumar\careerportal\entity\Application$Status.class
@@ -20,8 +22,10 @@ com\vimalkumar\careerportal\entity\Application.class
 com\vimalkumar\careerportal\config\OpenApiConfig.class
 com\vimalkumar\careerportal\CareerPortalApplication.class
 com\vimalkumar\careerportal\controller\JobController.class
+com\vimalkumar\careerportal\dto\adzuna\AdzunaSearchResponse.class
 com\vimalkumar\careerportal\dto\ResumeUploadResponse.class
 com\vimalkumar\careerportal\repository\JobRepository.class
+com\vimalkumar\careerportal\aggregator\CompanyAtsAggregatorService.class
 com\vimalkumar\careerportal\service\AuthService.class
 com\vimalkumar\careerportal\dto\AtsMatchResponse.class
 com\vimalkumar\careerportal\entity\SavedSearch$WorkMode.class
@@ -29,6 +33,7 @@ com\vimalkumar\careerportal\dto\ApplicationStatusUpdateRequest.class
 com\vimalkumar\careerportal\controller\CoverLetterController.class
 com\vimalkumar\careerportal\service\ResumeGeneratorService.class
 com\vimalkumar\careerportal\controller\AuthController.class
+com\vimalkumar\careerportal\dto\adzuna\AdzunaJobResult.class
 com\vimalkumar\careerportal\security\JwtAuthFilter.class
 com\vimalkumar\careerportal\dto\JobSearchRequest.class
 com\vimalkumar\careerportal\repository\ResumeVersionRepository.class
@@ -37,10 +42,13 @@ com\vimalkumar\careerportal\controller\ResumeController.class
 com\vimalkumar\careerportal\entity\SavedSearch.class
 com\vimalkumar\careerportal\dto\AuthResponse.class
 com\vimalkumar\careerportal\exception\DuplicateResourceException.class
+com\vimalkumar\careerportal\aggregator\CompanyAtsSource.class
 com\vimalkumar\careerportal\config\SecurityConfig.class
 com\vimalkumar\careerportal\repository\SavedSearchRepository.class
+com\vimalkumar\careerportal\dto\adzuna\AdzunaJobResult$AdzunaCompany.class
 com\vimalkumar\careerportal\exception\GlobalExceptionHandler.class
 com\vimalkumar\careerportal\dto\LoginRequest.class
+com\vimalkumar\careerportal\dto\adzuna\AdzunaJobResult$AdzunaLocation.class
 com\vimalkumar\careerportal\repository\UserRepository.class
 com\vimalkumar\careerportal\repository\AuditLogRepository.class
 com\vimalkumar\careerportal\exception\ApiError.class
@@ -50,6 +58,11 @@ com\vimalkumar\careerportal\service\JobService.class
 com\vimalkumar\careerportal\entity\Resume.class
 com\vimalkumar\careerportal\service\EmailAlertService.class
 com\vimalkumar\careerportal\entity\AuditLog.class
+com\vimalkumar\careerportal\aggregator\AdzunaClient.class
+com\vimalkumar\careerportal\dto\adzuna\AdzunaJobResult$AdzunaCategory.class
 com\vimalkumar\careerportal\dto\JobDto.class
+com\vimalkumar\careerportal\aggregator\JobAggregatorController.class
+com\vimalkumar\careerportal\aggregator\AtsBoardClient.class
 com\vimalkumar\careerportal\service\AtsMatchService.class
+com\vimalkumar\careerportal\aggregator\JobAggregatorService.class
 com\vimalkumar\careerportal\entity\AuditLog$Action.class
