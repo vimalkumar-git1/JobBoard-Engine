@@ -1,14 +1,18 @@
 package com.vimalkumar.careerportal.dto;
 
+import java.util.List;
+
 public class JobDescriptionMatchRequest {
     private String jobDescription;
     private String jobTitle;
+    private List<String> selectedKeywords;
 
     public JobDescriptionMatchRequest() {}
 
-    public JobDescriptionMatchRequest(String jobDescription, String jobTitle) {
+    public JobDescriptionMatchRequest(String jobDescription, String jobTitle, List<String> selectedKeywords) {
         this.jobDescription = jobDescription;
         this.jobTitle = jobTitle;
+        this.selectedKeywords = selectedKeywords;
     }
 
     public String getJobDescription() {
@@ -25,5 +29,13 @@ public class JobDescriptionMatchRequest {
 
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    public List<String> getSelectedKeywords() {
+        return selectedKeywords;
+    }
+
+    public void setSelectedKeywords(List<String> selectedKeywords) {
+        this.selectedKeywords = selectedKeywords;
     }
 }

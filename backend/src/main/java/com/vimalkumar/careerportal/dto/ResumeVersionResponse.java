@@ -1,6 +1,7 @@
 package com.vimalkumar.careerportal.dto;
 
 import com.vimalkumar.careerportal.entity.ResumeVersion;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ public class ResumeVersionResponse {
     private String targetRole;
     private Double matchScore;
     private String matchedSkillsSnapshot;
+    private String downloadUrl;
 
     public static ResumeVersionResponse fromEntity(ResumeVersion v) {
         ResumeVersionResponse r = new ResumeVersionResponse();
@@ -22,6 +24,7 @@ public class ResumeVersionResponse {
         r.setTargetRole(v.getTargetRole());
         r.setMatchScore(v.getMatchScore());
         r.setMatchedSkillsSnapshot(v.getMatchedSkillsSnapshot());
+        r.setDownloadUrl("/resumes/versions/" + v.getId() + "/download");
         return r;
     }
 }

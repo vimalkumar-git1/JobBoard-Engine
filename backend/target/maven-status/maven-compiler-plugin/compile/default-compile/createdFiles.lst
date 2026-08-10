@@ -7,6 +7,7 @@ com\vimalkumar\careerportal\repository\ResumeRepository.class
 com\vimalkumar\careerportal\dto\ResumeVersionResponse.class
 com\vimalkumar\careerportal\entity\Job$WorkMode.class
 com\vimalkumar\careerportal\exception\ResourceNotFoundException.class
+com\vimalkumar\careerportal\config\SecurityConfig$1.class
 com\vimalkumar\careerportal\entity\User.class
 com\vimalkumar\careerportal\dto\RegisterRequest.class
 com\vimalkumar\careerportal\service\ApplicationService.class

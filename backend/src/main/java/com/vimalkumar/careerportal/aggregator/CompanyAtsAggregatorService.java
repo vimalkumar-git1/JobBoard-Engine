@@ -1,14 +1,16 @@
 package com.vimalkumar.careerportal.aggregator;
 
-import com.vimalkumar.careerportal.entity.Job;
-import com.vimalkumar.careerportal.repository.JobRepository;
-import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.vimalkumar.careerportal.entity.Job;
+import com.vimalkumar.careerportal.repository.JobRepository;
+
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service

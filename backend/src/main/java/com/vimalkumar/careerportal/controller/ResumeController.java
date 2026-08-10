@@ -73,6 +73,18 @@ public class ResumeController {
         return ResponseEntity.ok(new ResumeUploadResponse(resume.getId(), resume.getOriginalFilename(), skills));
     }
 
+    @GetMapping
+    public ResponseEntity<List<ResumeUploadResponse>> listResumes(@AuthenticationPrincipal User user) {
+        List<ResumeUploadResponse> resumes = resumeRepository.findByUserIdOrderByUploadedAtDesc(user.getId())
+                .stream()
+                .map(resume -> new ResumeUploadResponse(
+                        resume.getId(),
+                        resume.getOriginalFilename(),
+                        resume.getParsedSkills() == null ? List.of() : List.of(resume.getParsedSkills().split(","))))
+                .toList();
+        return ResponseEntity.ok(resumes);
+    }
+
     /** Compare an already-uploaded resume against a specific job's tech stack. */
     @GetMapping("/{resumeId}/match")
     public ResponseEntity<AtsMatchResponse> match(@PathVariable Long resumeId,
@@ -113,13 +125,57 @@ public class ResumeController {
 
         byte[] pdfBytes = resumeGeneratorService.generate(
                 user.getFullName(), job.getTitle(), summary,
-                matchResult.getMatchedSkills(), matchResult.getMissingSkills());
+                matchResult.getMatchedSkills(), List.of());
 
         String versionLabel = resumeVersionService.peekNextVersionLabel(resume.getId(), job.getTitle());
         String savedPath = fileStorageService.saveGeneratedResume(user.getId(), versionLabel, pdfBytes);
 
         ResumeVersion version = resumeVersionService.createVersion(
                 resume, user, job.getTitle(), matchResult.getMatchedSkills(),
+                matchResult.getMatchScorePercent(), savedPath);
+
+        return ResponseEntity.ok(ResumeVersionResponse.fromEntity(version));
+    }
+
+    @PostMapping("/{resumeId}/versions-from-description")
+    public ResponseEntity<ResumeVersionResponse> createVersionFromDescription(@AuthenticationPrincipal User user,
+                                                                              @PathVariable Long resumeId,
+                                                                              @RequestBody JobDescriptionMatchRequest request) throws IOException {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resume not found: " + resumeId));
+
+        if (request == null || request.getJobDescription() == null || request.getJobDescription().isBlank()) {
+            throw new IllegalArgumentException("Job description is required for tailored resume generation.");
+        }
+
+        List<String> resumeSkills = resume.getParsedSkills() == null
+                ? List.of()
+                : List.of(resume.getParsedSkills().split(","));
+
+        List<String> jobSkills = resumeParserService.extractSkills(request.getJobDescription());
+        String jobTechStack = String.join(",", jobSkills);
+        var matchResult = atsMatchService.computeMatch(resumeSkills, jobTechStack);
+
+        List<String> injectedKeywords = request.getSelectedKeywords() == null
+                ? List.of()
+                : request.getSelectedKeywords();
+
+        String targetRole = request.getJobTitle() == null || request.getJobTitle().isBlank()
+                ? "Target Role"
+                : request.getJobTitle();
+
+        String summary = "Candidate with hands-on experience in " + String.join(", ", matchResult.getMatchedSkills())
+                + " applying for the " + targetRole + ".";
+
+        byte[] pdfBytes = resumeGeneratorService.generate(
+                user.getFullName(), targetRole, summary,
+                matchResult.getMatchedSkills(), injectedKeywords);
+
+        String versionLabel = resumeVersionService.peekNextVersionLabel(resume.getId(), targetRole);
+        String savedPath = fileStorageService.saveGeneratedResume(user.getId(), versionLabel, pdfBytes);
+
+        ResumeVersion version = resumeVersionService.createVersion(
+                resume, user, targetRole, matchResult.getMatchedSkills(),
                 matchResult.getMatchScorePercent(), savedPath);
 
         return ResponseEntity.ok(ResumeVersionResponse.fromEntity(version));

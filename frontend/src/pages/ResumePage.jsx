@@ -16,6 +16,7 @@ export default function ResumePage() {
   const [versions, setVersions] = useState([]);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("jobId"); // "jobId" or "description"
+  const [selectedMissingKeywords, setSelectedMissingKeywords] = useState([]);
 
   const loadVersions = async () => {
     try {
@@ -26,8 +27,21 @@ export default function ResumePage() {
     }
   };
 
+  const loadResumes = async () => {
+    try {
+      const res = await client.get("/resumes");
+      if (res.data.length > 0) {
+        setResumeId(res.data[0].resumeId);
+        setSkills(res.data[0].extractedSkills || []);
+      }
+    } catch (err) {
+      // ignore
+    }
+  };
+
   useEffect(() => {
     loadVersions();
+    loadResumes();
   }, []);
 
   const handleUpload = async (e) => {
@@ -38,9 +52,7 @@ export default function ResumePage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await client.post("/resumes/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const res = await client.post("/resumes/upload", formData);
       setResumeId(res.data.resumeId);
       setSkills(res.data.extractedSkills);
     } catch (err) {
@@ -51,31 +63,79 @@ export default function ResumePage() {
   };
 
   const handleMatch = async () => {
-    if (!resumeId || !jobId) return;
+    if (!resumeId) return;
+    if (activeTab === "description" && !jobDescription) {
+      setError("Paste a job description first.");
+      return;
+    }
+    if (activeTab === "jobId" && !jobId) {
+      setError("Enter a job ID first.");
+      return;
+    }
+
     setMatching(true);
     setMatchResult(null);
+    setSelectedMissingKeywords([]);
     setError("");
     try {
-      const res = await client.get(`/resumes/${resumeId}/match`, { params: { jobId } });
+      let res;
+      if (activeTab === "description") {
+        res = await client.post(`/resumes/${resumeId}/match-description`, {
+          jobDescription,
+          jobTitle,
+        });
+      } else {
+        res = await client.get(`/resumes/${resumeId}/match`, { params: { jobId } });
+      }
       setMatchResult(res.data);
     } catch (err) {
-      setError(err.response?.data?.message || "Could not compute match. Check the Job ID exists.");
+      setError(err.response?.data?.message || "Could not compute match.");
     } finally {
       setMatching(false);
     }
   };
 
   const handleGenerateVersion = async () => {
-    if (!resumeId || !jobId) return;
+    if (!resumeId) return;
+    if (activeTab === "jobId" && !jobId) return;
+    if (activeTab === "description" && !jobDescription) return;
+
     setGenerating(true);
     setError("");
     try {
-      await client.post(`/resumes/${resumeId}/versions`, null, { params: { jobId } });
+      if (activeTab === "description") {
+        await client.post(`/resumes/${resumeId}/versions-from-description`, {
+          jobDescription,
+          jobTitle,
+          selectedKeywords: selectedMissingKeywords,
+        });
+      } else {
+        await client.post(`/resumes/${resumeId}/versions`, null, { params: { jobId } });
+      }
       await loadVersions();
     } catch (err) {
       setError(err.response?.data?.message || "Could not generate a tailored version.");
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleDownloadVersion = async (version) => {
+    try {
+      const res = await client.get(version.downloadUrl, {
+        responseType: "blob",
+      });
+      const blob = new Blob([res.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${version.versionLabel}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err.response?.data?.message || "Could not download the resume PDF.");
     }
   };
 
@@ -117,21 +177,60 @@ export default function ResumePage() {
       {resumeId && (
         <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6">
           <h3 className="font-semibold text-navy mb-3">2. Compare against a job</h3>
-          <div className="flex items-center gap-3">
-            <input
-              placeholder="Job ID (see it in the Jobs tab)"
-              value={jobId}
-              onChange={(e) => setJobId(e.target.value)}
-              className="border border-gray-300 rounded px-3 py-2 text-sm w-64"
-            />
+
+          <div className="flex gap-2 mb-4">
             <button
-              onClick={handleMatch}
-              disabled={!jobId || matching}
-              className="bg-navy text-white rounded px-4 py-2 text-sm font-semibold hover:bg-accent transition disabled:opacity-60"
-            >
-              {matching ? "Scoring..." : "Compute Match Score"}
+              onClick={() => setActiveTab("jobId")}
+              className={`px-3 py-2 rounded ${activeTab === "jobId" ? "bg-navy text-white" : "bg-gray-100 text-gray-700"}`}>
+              Job ID
+            </button>
+            <button
+              onClick={() => setActiveTab("description")}
+              className={`px-3 py-2 rounded ${activeTab === "description" ? "bg-navy text-white" : "bg-gray-100 text-gray-700"}`}>
+              Job Description
             </button>
           </div>
+
+          {activeTab === "jobId" ? (
+            <div className="flex items-center gap-3">
+              <input
+                placeholder="Job ID (see it in the Jobs tab)"
+                value={jobId}
+                onChange={(e) => setJobId(e.target.value)}
+                className="border border-gray-300 rounded px-3 py-2 text-sm w-64"
+              />
+              <button
+                onClick={handleMatch}
+                disabled={!jobId || matching}
+                className="bg-navy text-white rounded px-4 py-2 text-sm font-semibold hover:bg-accent transition disabled:opacity-60"
+              >
+                {matching ? "Scoring..." : "Compute Match Score"}
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <input
+                placeholder="Target role / job title"
+                value={jobTitle}
+                onChange={(e) => setJobTitle(e.target.value)}
+                className="border border-gray-300 rounded px-3 py-2 text-sm w-full"
+              />
+              <textarea
+                rows={6}
+                placeholder="Paste the job description here"
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
+                className="border border-gray-300 rounded px-3 py-2 text-sm w-full resize-none"
+              />
+              <button
+                onClick={handleMatch}
+                disabled={!jobDescription || matching}
+                className="bg-navy text-white rounded px-4 py-2 text-sm font-semibold hover:bg-accent transition disabled:opacity-60"
+              >
+                {matching ? "Scoring..." : "Compute Match Score"}
+              </button>
+            </div>
+          )}
 
           {matchResult && (
             <div className="mt-4">
@@ -154,6 +253,33 @@ export default function ResumePage() {
                   </div>
                 </div>
               </div>
+
+              {activeTab === "description" && matchResult.missingSkills.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-gray-800 mb-2">Select missing keywords you want included:</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {matchResult.missingSkills.map((skill) => (
+                      <label key={skill} className="inline-flex items-center gap-2 text-sm border border-gray-200 rounded px-3 py-2">
+                        <input
+                          type="checkbox"
+                          value={skill}
+                          checked={selectedMissingKeywords.includes(skill)}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setSelectedMissingKeywords((current) =>
+                              current.includes(value)
+                                ? current.filter((item) => item !== value)
+                                : [...current, value]
+                            );
+                          }}
+                        />
+                        {skill}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={handleGenerateVersion}
                 disabled={generating}
@@ -178,7 +304,15 @@ export default function ResumePage() {
                 <p className="text-sm font-medium text-navy">{v.versionLabel}</p>
                 <p className="text-xs text-gray-500">{v.targetRole}</p>
               </div>
-              <span className="text-sm font-semibold text-accent">{v.matchScore}%</span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-accent">{v.matchScore}%</span>
+                <button
+                  onClick={() => handleDownloadVersion(v)}
+                  className="text-sm text-navy underline"
+                >
+                  Download
+                </button>
+              </div>
             </div>
           ))}
         </div>

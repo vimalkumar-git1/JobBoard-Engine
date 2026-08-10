@@ -1,15 +1,16 @@
 package com.vimalkumar.careerportal.service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.TextAlignment;
-import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Generates a single-column, ATS-friendly PDF resume for a given tailored
@@ -21,7 +22,7 @@ import java.util.List;
 public class ResumeGeneratorService {
 
     public byte[] generate(String fullName, String targetRole, String summary,
-                            List<String> matchedSkills, List<String> missingSkillsToAdd)
+                            List<String> matchedSkills, List<String> injectedKeywords)
             throws IOException {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -41,11 +42,12 @@ public class ResumeGeneratorService {
             document.add(new Paragraph("SKILLS").setBold().setFontSize(13));
             document.add(new Paragraph(String.join(", ", matchedSkills)).setFontSize(10));
 
-            if (missingSkillsToAdd != null && !missingSkillsToAdd.isEmpty()) {
+            if (injectedKeywords != null && !injectedKeywords.isEmpty()) {
                 document.add(new Paragraph(" "));
-                document.add(new Paragraph("Suggested skills to learn for this role:")
+                document.add(new Paragraph("TAILORED KEYWORDS").setBold().setFontSize(13));
+                document.add(new Paragraph("This version includes the following target keywords:")
                         .setFontSize(9).setItalic().setTextAlignment(TextAlignment.LEFT));
-                document.add(new Paragraph(String.join(", ", missingSkillsToAdd)).setFontSize(9));
+                document.add(new Paragraph(String.join(", ", injectedKeywords)).setFontSize(10));
             }
         }
 

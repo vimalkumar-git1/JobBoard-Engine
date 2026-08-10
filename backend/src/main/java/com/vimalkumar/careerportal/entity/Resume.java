@@ -27,7 +27,7 @@ public class Resume {
     private String filePath;
 
     @Lob
-    @Column(name = "parsed_text")
+    @Column(name = "parsed_text", columnDefinition = "LONGTEXT")
     private String parsedText;
 
     @Column(name = "parsed_skills", length = 1000)

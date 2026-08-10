@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -50,11 +52,36 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleJsonParse(HttpMessageNotReadableException ex) {
+        log.error("Malformed JSON request", ex);
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(),
+                "Malformed JSON request. Please send valid JSON.", LocalDateTime.now(), null);
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiError> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex) {
+        log.error("Unsupported HTTP method", ex);
+        ApiError error = new ApiError(HttpStatus.METHOD_NOT_ALLOWED.value(),
+                ex.getMessage(), LocalDateTime.now(), null);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(error);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex) {
+        log.error("Invalid request argument", ex);
+        ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(), LocalDateTime.now(), null);
+        return ResponseEntity.badRequest().body(error);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex) {
         log.error("Unhandled exception while processing request", ex);
+        String message = ex.getMessage() != null ? ex.getMessage() : "Something went wrong. Please try again.";
         ApiError error = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Something went wrong. Please try again.", LocalDateTime.now(), null);
+                message, LocalDateTime.now(), null);
         return ResponseEntity.internalServerError().body(error);
     }
 }
